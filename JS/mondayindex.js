@@ -1,18 +1,14 @@
 
-
 function getEndPointData(endPointURL, bindingData,rowId){
     const xhr = new XMLHttpRequest();
     xhr.open("Get", endPointURL);
     xhr.onload = function () {
         const data = JSON.parse(xhr.responseText); 
         bindingData(data,rowId);
-  
     }
     xhr.send();
   }
  
-
-
 function generateCell(title,person,date,status) {
  let template=document.querySelector("template").content.cloneNode(true);
 template.querySelector("#item").innerHTML=title;
@@ -21,7 +17,6 @@ template.querySelector("#date").innerHTML=date;
 template.querySelector("#status").innerHTML=status;
  return template;
 }
-
 
 function bindingData(data,rowId) {
     
@@ -33,7 +28,6 @@ function bindingData(data,rowId) {
         document.getElementById(`${rowId}`).append(generateCell(title,person,date,status));
     }
 }
-
 
 getEndPointData("http://localhost:3005/api/projectplan", bindingData,"project");
 getEndPointData("http://localhost:3005/api/projectTwitter", bindingData,"projectTwitter");
