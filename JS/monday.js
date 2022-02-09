@@ -21,7 +21,8 @@ else{
 });
 
 
-    // Config your database credential
+
+
 
 app.get('/api/projectplan',(req,res)=>{
     
