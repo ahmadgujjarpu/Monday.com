@@ -2,7 +2,7 @@ const express =require("express");
 const mysql=require("mysql");
 const bodyParser = require("body-parser")
 const cors=require("cors");
-
+const bcrypt=require("bcrypt");
 const app=express();
 app.use(cors());
 
@@ -31,12 +31,50 @@ else{
 // app.get("/signup",(req, res)=> {
 //     console.log(res.sendFile("/ahmad work/Monday.com/signup.html"));
 //   });
-  app.post("/signup",(req, res)=> {
+  app.post("/signup",async (req, res)=> {
     var email = req.body.email;
     var password = req.body.password;
     var repassword=req.body.re_password;
-    con.query(`INSERT INTO sign_up(email,password,re_enter_password) VALUES ("${email}","${password}","${repassword}")`);
-    res.send(req.body);
+    const hash=await bcrypt.hash(password,10);
+    const hash2=await bcrypt.hash(repassword,10);
+    if(password===repassword){
+        con.query(`INSERT INTO sign_up(email,password,re_enter_password) VALUES ("${email}","${hash}","${hash2}")`);
+        res.status(200).send(req.body);
+
+    }
+    else{
+        res.status(404);
+        res.send("password does not mathes with re enter password");
+    }
+   
+});
+app.post("/login",(req,res)=>{
+    console.log(req.body);
+    var email=req.body.email;
+    var password=req.body.password;
+    
+    con.query(`select * from sign_up where Email="${email}"`,async (err,result)=>{
+        
+    try {
+        if(result){
+         const validpass= await  bcrypt.compare(password,result[0].password);
+          if(validpass){
+              res.send("valid password and email");
+          }
+          else{
+              res.send("wrong password");
+          }
+        }
+        else{
+           res.send("user not found"); 
+        }
+    }
+    catch{
+        if(err){
+            res.send(err);
+        }
+    }
+    });
 });
 
 app.get('/api/projectplan',(req,res)=>{
@@ -67,7 +105,3 @@ app.get('/api/projectTwitter',(req,res)=>{
 app.listen(3005,() => {
     console.log("server started");
 });
-
-
-
-
