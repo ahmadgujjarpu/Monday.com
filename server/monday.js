@@ -1,5 +1,5 @@
 const express =require("express");
-const mysql=require("mysql");
+
 const bodyParser = require("body-parser")
 const cors=require("cors");
 const bcrypt=require("bcrypt");
@@ -10,7 +10,9 @@ app.use(bodyParser.urlencoded({
     extended:true
 }));
 app.use(bodyParser.json());
- const con=mysql.createConnection(
+const mysql=require("mysql");
+
+const con=mysql.createConnection(
     {
         user: 'root',
         password: '',
@@ -25,9 +27,6 @@ else{
     console.log("connected");
 }
 });
-
-
-
 // app.get("/signup",(req, res)=> {
 //     console.log(res.sendFile("/ahmad work/Monday.com/signup.html"));
 //   });
@@ -55,7 +54,6 @@ app.post("/login",(req,res)=>{
     
     con.query(`select * from sign_up where Email="${email}"`,async (err,result)=>{
         
-    try {
         if(result){
          const validpass= await  bcrypt.compare(password,result[0].password);
           if(validpass){
@@ -68,12 +66,7 @@ app.post("/login",(req,res)=>{
         else{
            res.send("user not found"); 
         }
-    }
-    catch{
-        if(err){
-            res.send(err);
-        }
-    }
+    
     });
 });
 
